@@ -4,7 +4,8 @@ function cmIntegration(){
 		{
 			mode: 'javascript',
 			lineNumbers: true,
-			readOnly: false
+			readOnly: false,
+			theme: 'ambiance'
 		}
 	);
 	
@@ -13,7 +14,8 @@ function cmIntegration(){
 		{
 			mode: 'javascript',
 			lineNumbers: true,
-			readOnly: false
+			readOnly: false,
+			theme: 'ambiance'
 		}
 	);
 	var myCodeMirrorCONSOLE = CodeMirror.fromTextArea(

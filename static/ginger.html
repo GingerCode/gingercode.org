@@ -1,25 +1,84 @@
 <html>
 	<head>
+		<!-- Estilos de fuente. Los he cogido a la ligera...  -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+		<!-- Librería codemirror -->
 		<script src="/js/codemirror.js"></script>
 		<link rel="stylesheet" href="/css/codemirror.css">
+		<link rel="stylesheet" href="/theme/ambiance.css">
 		<script src="/js/javascript/javascript.js"></script>
+
+		<!-- Integración de codemirror-->
 		<script src="/js/cm-integration.js"></script>
+
+		<!-- Algoritmo para pasar de pseudocodigo a JS-->
 		<script src="/js/pc-js.js"></script>
+		
+		<!-- ######### -->
+
 		<title>Ginger Code</title>
+		
+		<!-- Hoja de estilos, de momento la tiro aquí -->
 		<style>
+			body{
+				background-color: #eeeeee;
+			}
+			#space{
+				max-width: 1000px;
+				margin: 0 auto;				
+			}
+			header{
+				font-family: 'Open Sans', sans-serif;
+				text-align: center;
+			}
+			#space section{
+				text-align: center;
+			}
+			h2{
+				color: #fff;
+				background-color: black;
+				margin: 0;
+				padding: 5px 35px;
+			}
+			#PC, #JS, #CONSOLE{
+				text-align: left;
+				font-family: 'Open Sans', sans-serif;
+			} 
 			#PC, #JS{
-				width: 45%;
+				width: 49%;
 				display: inline-block;
+				//border: 1px solid red;
+			}
+			#CONSOLE{
+				margin: 7px;
+				border: 2px solid #eee;
 			}
 		</style>
 
 	</head>
+
+	<!-- Comienza la página -->
 	<body onload="cmIntegration();">
-		<section>
+		<header>
 			<h1>Ginger Code</h1>
-			<div id="PC"><textarea onchangue="compile();" id="PCt"></textarea></div>
-			<div id="JS"><textarea id="JSt"></textarea></div>
-			<div id="CONSOLE"><textarea id="CONSOLEt"></textarea></div>
-		</section>
+			<p>Aprende a programar en pseudocodigo con Ginger Code</p>
+		</header>
+		<div id="space">
+			<section>				
+				<div id="PC">
+					<h2>Pseudocodigo: </h2>
+					<textarea onchangue="compile();" id="PCt"></textarea>
+				</div>
+				<div id="JS">
+					<h2>JavaScript:</h2>
+					<textarea id="JSt"></textarea>
+				</div>
+				<div id="CONSOLE">
+					<h2>Consola</h2>
+					<textarea id="CONSOLEt"></textarea>
+				</div>
+			</section>
+		</div>
 	</body>
 </html>
