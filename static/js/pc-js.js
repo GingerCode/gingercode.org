@@ -1,34 +1,43 @@
 
 // Aquí, sustituyo el window.compile de @bifuer por una función para que sea llamada en el front
 // También hay que pasarle a la función por parámetro los objetos de consola de la librería CodeMirror
-function compile(PC,cmJS,cmCONSOLE){
+
+// replaces guarda parejas de string/regexp y su sustitución para pasarlas de forma sencilla a cada linea
+var replaces = [
+	[" es igual que ",     " == "],   [" igual que ",        " == "],
+	[" es mayor que ",     " > "],    [" mayor que ",        " > "],
+	[" es menor que ",     " < "],    [" es menor que ",     " < "],
+	[" es mayor que ",     " > "],    [" es mayor que ",     " > "],
+	[" es menor que ",     " <= "],   [" es menor que ",     " <= "],
+	[" es distinto que ",  " != "],   [" distinto que ",      " != "],
+	[" no es ",                " != "],
+	[" es falso",             " == false"],
+	[" es cierto",            " == true"],
+	[" falso",                " false"],
+	[" cierto",               " true"],
+	[" y ademas ",             " && "], [" O ",               " && "],
+	[" o si ",                 " || "], [" Y ",               " || "],
+];
+
+// creamos un funcion global que sustituira a console.log en la "jaula" que vamos a montar
+function consoleReplace(msg){
+	// dentro de la jaula los console.log imprimen al textarea de CONSOLE
+	// Aquí igual, se sustituye la función para la integración con codemirror
+	//document.getElementById("CONSOLEt").value += msg+"\n";
+	window.cms.c.getDoc().setValue(window.cms.c.getValue()+ msg+"\n");
+}
+
+function compile(){
 	
 	// tomamos el PS
 	//var PC = document.getElementById("PCt").value;
 	// Se divide en lineas, un array con cada linea
-
+	var PC = window.cms.pc.getValue();
 	PC = PC.split("\n");
 	// Array donde se guardará cada linea de JS resultante
 	var JSlines = [];
 	// controlador de la tabulacion, guarda la "profundidad" de la ultima linea leida
 	var lastDeep = 0;
-	//var context = []; // Esto aun no se usa, es para mas adelante mantener control sobre los contextos de las variables para hacer las declaraciones correctamente.
-	// replaces guarda parejas de string/regexp y su sustitución para pasarlas de forma sencilla a cada linea
-	var replaces = [
-		[" es igual que ",     " == "],   [" igual que ",        " == "],
-		[" es mayor que ",     " > "],    [" mayor que ",        " > "],
-		[" es menor que ",     " < "],    [" es menor que ",     " < "],
-		[" es mayor que ",     " > "],    [" es mayor que ",     " > "],
-		[" es menor que ",     " <= "],   [" es menor que ",     " <= "],
-		[" es distinto que ",  " != "],   [" distinto que ",      " != "],
-		[" no es ",                " != "],
-		[" es falso",             " == false"],
-		[" es cierto",            " == true"],
-		[" falso",                " false"],
-		[" cierto",               " true"],
-		[" y ademas ",             " && "], [" O ",               " && "],
-		[" o si ",                 " || "], [" Y ",               " || "],
-	];
 
 	//console.log(PC);
 	PC.forEach(function(line,i){
@@ -113,23 +122,19 @@ function compile(PC,cmJS,cmCONSOLE){
 	//pasamos el resultado al textarea de JS
 	//Esta es la llamada con jsfiddle: document.getElementById("JSt").value = JSlines.join("\n");
 	// y se cambia por esta por el tema de la integración con codemirror
-	cmJS.getDoc().setValue(JSlines.join("\n"));
-	// creamos un funcion global que sustituira a console.log en la "jaula" que vamos a montar
-	function consoleReplace(msg){
-		// dentro de la jaula los console.log imprimen al textarea de CONSOLE
-		// Aquí igual, se sustituye la función para la integración con codemirror
-		//document.getElementById("CONSOLEt").value += msg+"\n";
-		cmCONSOLE.getDoc().setValue(cmCONSOLE.getValue()+ msg+"\n");
-	}
-	
+	window.cms.js.getDoc().setValue(JSlines.join("\n"));
+}
+
+function jailrun(){
 	// con control de exceptciones intentamos ejecutar el codigo resultante en una "jaula"
+	window.cms.c.getDoc().setValue("");
 	try {
 		// creamos la jaula, consite en una función que se llama a si misma y contiene el codigo a ejecutar
 		// la gracia de la jaula es que dentro de esa funcion declaramos un console local con el metodo .log remplazado por la función que ya hemos preparado
 		var toEval =
 			"(function(){\n"+
 			"var console = {log:consoleReplace};\n"+
-			JSlines.join("\n")+
+			window.cms.js.getValue()+
 			"})();";
 			// ejecutamos la "jaula"
 		eval(toEval);
