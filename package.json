@@ -1,0 +1,33 @@
+{
+  "name": "Gingercode",
+  "description": "Translate from pseudocode to code",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OSWeekends/GingerCode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OSWeekends/GingerCode/issues"
+  },
+  "homepage": "http://gingercode.org",
+  "main": "gingercode.js",
+  "author": "Open Source Weekends",
+  "contributors": [
+    {
+      "name": "Javier Gallego Martín",
+      "url": "https://github.com/bifuer"
+    },
+    {
+      "name": "Chelo Quilón",
+      "url": "https://github.com/lilxelo"
+    },
+    {
+      "name": "Jose Manuel Gallego Chamorro",
+      "url": "https://github.com/Josheriff"
+    },
+    {
+      "name": "Ulises Gascón",
+      "url": "https://github.com/ulisesGascon"
+    }],
+  "license": "GPL-3.0"
+}
