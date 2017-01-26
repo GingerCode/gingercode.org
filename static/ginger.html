@@ -36,10 +36,11 @@
 				text-align: center;
 			}
 			h2{
-				color: #fff;
-				background-color: black;
+				color: #ffffff;
+				background-color: #111111;
 				margin: 0;
-				padding: 5px 35px;
+				padding: 10px 20px;
+				border-bottom: 1px solid #444444;
 			}
 			#PC, #JS, #CONSOLE{
 				text-align: left;
@@ -53,6 +54,18 @@
 			#CONSOLE{
 				margin: 7px;
 				border: 2px solid #eee;
+			}
+			button {
+				vertical-align: top;
+				font-size: 15px;
+				padding: 3px 8px;
+				margin: 3px 0;
+				float: right;
+				font-weight: bold;
+				background-color: #444444;
+				color: #ffffff;
+				border: 1px solid #555555;
+				border-radius: 8px;
 			}
 		</style>
 
@@ -75,7 +88,7 @@
 					<textarea id="JSt"></textarea>
 				</div>
 				<div id="CONSOLE">
-					<h2>Consola<button onclick="jailrun();">Probar</button></h2>
+					<h2>Consola<button onclick="PCexe();">Probar</button></h2>
 					<textarea id="CONSOLEt"></textarea>
 				</div>
 			</section>

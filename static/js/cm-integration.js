@@ -1,4 +1,8 @@
+var PCtoJS = function(){};
+var PCexe = function(){};
+
 function cmIntegration(){
+	// Set codemirror instances
 	var myCodeMirrorPC = CodeMirror.fromTextArea(
 		document.getElementById("PCt"),
 		{
@@ -25,15 +29,29 @@ function cmIntegration(){
 			readOnly: true
 		}
 	);
+	// Atach PC change event
 	myCodeMirrorPC.on("change", function(cm, change) {
-		compile();
+		myCodeMirrorJS.getDoc().setValue(compile(myCodeMirrorPC.getValue()));
 	});
 	window.cms = {
 		pc: myCodeMirrorPC,
 		js: myCodeMirrorJS,
 		c: myCodeMirrorCONSOLE
 	};
+
+	// Wrapper para llamadas al compilador
+	PCtoJS = function(){
+		myCodeMirrorJS.getDoc().setValue(compile(myCodeMirrorPC.getValue()));
+	};
+
+	// Wrapper para ejecución via web
+	PCexe = function(){
+		jailrun(myCodeMirrorJS.getValue(),function(msg){
+			myCodeMirrorCONSOLE.getDoc().setValue(myCodeMirrorCONSOLE.getValue()+msg+"\n");
+		});
+	};
+
 	myCodeMirrorPC.getDoc().setValue('mostrar "comenzando"\n@base = 0\nmostrar @base\n\nrepetir 5 veces\n\t@base = @base + 2\n\tmostrar @base\n\nmostrar "fin"\n');
-	compile();
-	jailrun();
+	PCtoJS();
+	PCexe();
 }
