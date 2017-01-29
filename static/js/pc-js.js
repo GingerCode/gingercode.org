@@ -1,225 +1,230 @@
 
+var rules = {
+	string: /((?:\"(?:(?:\\\")|[^\"])*\")|(?:\'(?:(?:\\\')|[^\'])*\'))/,
+	prop: /((?:\@[a-zA-Z\_\-][a-zA-Z\_\-0-9]*)+)/,
+	var: /(\@[a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
+	func: /([\#][a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
+	number: /(\-?[0-9]+(?:\.[0-9]+)?)/,
+	logic: /(\>\=|\<\=|\=\=|\!\=|\>|\<)/,
+	math: /(\+|\-|\*|\/|\%)/,
+	comma: /( y |,)/,
+	space: /( +)/,
+	asign: /(\=)/,
+	words: /([a-zA-Z]+)/
+};
+
+var pLogics = [
+	["es mayor o igual que",">="],["mayor o igual que",">="],["mayor o igual",">="],
+	["es menor o igual que","<="],["menor o igual que","<="],["menor o igual","<="],
+	["es mayor que",">"],["mayor que",">"],["mayor",">"],
+	["es menor que","<"],["menor que","<"],["menor","<"],
+	["es distinto que","!="],["distinto que","!="],["distinto","!="],["no es","!="],
+	["es igual que","=="],["igual que","=="],["igual","=="],["es","=="]
+];
+
+var pMaths = [
+	["menos","-"],
+	["mas","+"],["sumar","+"],["sumado","+"],
+	["multiplicado por","*"],["multiplicado","*"],
+	["dividido entre","/"],["dividido","/"],
+	["resto entre","%"],["resto","%"]
+];
+
+var pLogicRule = [];
+pLogics.forEach(function(v,i,a){pLogicRule[i]=v[0];});
+pLogicRule = new RegExp("("+pLogicRule.join("|")+")");
+
+var pMathRule = [];
+pMaths.forEach(function(v,i,a){pMathRule[i]=v[0];});
+pMathRule = new RegExp("("+pMathRule.join("|")+")");
+
+var operators =  new RegExp("(?:"+[
+	rules.logic.source,
+	rules.math.source,
+	pLogicRule.source,
+	pMathRule.source
+].join("|")+")");
+
+var operands = new RegExp("(?:"+[
+	rules.string.source,
+	rules.prop.source,
+	rules.var.source,
+	rules.func.source,
+	rules.number.source
+].join("|")+")");
+
+var checkAll =  new RegExp("(?:"+[
+	operands.source,
+	operators.source,
+	rules.comma.source,
+	rules.space.source,
+	rules.asign.source,
+	rules.words.source
+].join("|")+")","gm");
+//console.log(checkAll);
+
+var value = new RegExp("(?:"+operands.source+"(?: *"+operators.source+" *"+operands.source+")*)","g");
+var call = 	new RegExp("(?:"+rules.func.source+" +("+operands.source+"(?: *(?: y |,) *"+operands.source+")*))","g");
+var expresion = new RegExp("("+value.source+"|"+call.source+")","g");
+
+var sentences = {
+	asign: new RegExp("^(definir )? *"+rules.var.source+" +\\= +"+expresion.source+"$"),
+	struct: new RegExp("^(definir )? *"+rules.var.source+"$"),
+	list: new RegExp("^(definir )? *"+rules.var.source+" +\\= +("+expresion.source+"(?: *(?: y |,) *"+expresion.source+")+)$"),
+	if: new RegExp("^si +"+expresion.source+"$"),
+	elseif: new RegExp("^pero si +"+expresion.source+"$"),
+	else: new RegExp("^si no$"),
+	for: new RegExp("^repetir +"+expresion.source+"( +veces)?$"),
+	while: new RegExp("^repetir si +"+expresion.source+"$"),
+	foreach: new RegExp("^por cada +"+rules.var.source+" +en +"+rules.prop.source+"$"),
+	function: new RegExp("^(procedimiento +)?"+rules.func.source+"( +"+rules.prop.source+"(?: *(?: y |,) *"+rules.prop.source+")*)?$"),
+	print: new RegExp("^(mostrar|imprimir) +"+expresion.source+"$"),
+	return: new RegExp("^(devolver|enviar) +"+expresion.source+"$"),
+	expresion: new RegExp("^"+expresion.source+"$")
+};
+
+
 function compile(input){
+	PC = (input+"\n").split("\n");
+	var JSlines = [];
+	var blocklist = [];
+	var block;
+	var lastClosedBlock;
+	var indentTypes = [/\t/,/( {2})/];
+	var indentType,indentTypeReplace;
 
-	var rules = {
-		string: /((?:\"(?:(?:\\\")|[^\"])*\")|(?:\'(?:(?:\\\')|[^\'])*\'))/,
-		prop: /((?:\@[a-zA-Z\_\-][a-zA-Z\_\-0-9]*)+)/,
-		var: /(\@[a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
-		func: /([\#][a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
-		number: /(\-?[0-9]+(?:\.[0-9]+)?)/,
-		//mod: [/(\!)/,/( no es )/]
-	};
+	var blockDeep;
+	var indent;
 
-	var operators =  new RegExp("(?:"+[
-		/(\+|\-|\*|\/|\%)/.source,
-		/(\>\=|\<\=|\=\=|\!\=|\>|\<)/.source
-	].join("|")+")");
+	try {
+		PC.forEach(function(line,i){
+			indent = 0;
+			if(line.match(/^\s+/) && !indentType){
+				indentTypes.forEach(function(r,i){
+					if(line.match(new RegExp("^"+r.source+"+"))){
+						indentType = new RegExp("^"+r.source+"+");
+						indentTypeReplace = r;
+					}
+				});
+				if(!indentType){
+					throw "Tipo de indentación no válido, linea "+(i+1);
+				}
+			}
 
-	var operands = new RegExp("(?:"+[
-		rules.string.source,
-		rules.prop.source,
-		rules.var.source,
-		rules.number.source
-	].join("|")+")");
+			blockDeep = blocklist.length;
+			indent = indentType?(line.match(indentType) || [""])[0].replace(indentTypeReplace,"\t").length:0;
+			line = line.replace(indentType,"");
 
-	var pLogics = [
-		["es mayor o igual que","="],
-		["mayor o igual que",">="],
-		["mayor o igual",">="],
-		["es menor o igual que","<="],
-		["menor o igual que","<="],
-		["menor o igual","<="],
-		["es igual que","=="],
-		["igual que","=="],
-		["igual","=="],
-		["es distinto que","!="],
-		["distinto que","!="],
-		["distinto","!="],
-		["es mayor que",">"],
-		["mayor que",">"],
-		["mayor",">"],
-		["es menor que","<"],
-		["menor que","<"],
-		["menor","<"]
-	];
-	var pMaths = [
-		["menos","-"],
-		["mas","+"],
-		["multiplicado por","*"],
-		["por","*"],
-		["dividido entre","/"],
-		["dividido","/"],
-		["resto entre","%"],
-		["resto","%"]
-	];
-
-	var pLogicRule = "";
-	pLogics.forEach(function(v,i){
-		if(i>0){
-			pLogicRule+="|";
-		}
-		pLogicRule += ""+v[0]+"";
-	});
-	pLogicRule = new RegExp("("+pLogicRule+")");
-
-	var pMathRule = "";
-	pMaths.forEach(function(v,i){
-		if(i>0){
-			pMathRule+="|";
-		}
-		pMathRule += ""+v[0]+"";
-	});
-	pMathRule = new RegExp("("+pMathRule+")");
-
-	var checkAll =  new RegExp("(?:"+[
-		rules.string.source,                                    // 1
-		rules.prop.source,                                      // 2
-		rules.var.source,                                       // 3
-		rules.number.source,                                    // 4
-		rules.func.source,                                      // 5
-		operators.source,                                       // 6  Math, 7 Logic
-		pMathRule.source,                                       // 8  pMath
-		pLogicRule.source,                                      // 9  pLogic
-		/( y |,)/.source,                                       // 10
-		/( +)/.source,                                          // 11
-		/(\=)/.source,                                          // 12
-		/([a-zA-Z]+)/.source                                    // 13
-		// |^\t+
-	].join("|")+")","gm");
-	console.log(checkAll);
-
-	//var check = new RegExp("(?:"+operands.source+"|"+operators.source+"|"+pOperators.source+")","g");
-	var value = new RegExp("(?:"+operands.source+"(?: *"+operators.source+" *"+operands.source+")*)","g");
-	var call = 	new RegExp("(?:"+rules.func.source+" +"+operands.source+"(?: *, *"+operands.source+")*)","g");
-	var expresion = new RegExp("("+value.source+"|"+call.source+")","g");
-	
-
-	var sentences = {
-		asign: new RegExp("^(definir )? *"+rules.var.source+" +\\= +"+expresion.source+" *$"),
-		struct: new RegExp("^(definir )? *"+rules.var.source+" *$"),
-		list: new RegExp("^(definir )? *"+rules.var.source+" +\\= +("+expresion.source+"(?: *, *"+expresion.source+")+) *$"),
-		if: new RegExp("^si +"+expresion.source+" *$"),
-		elseif: new RegExp("^pero si +"+expresion.source+" *$"),
-		else: new RegExp("^si no +"+expresion.source+" *$"),
-		for: new RegExp("^repetir +"+expresion.source+"( +veces)? *$"),
-		while: new RegExp("^repetir si +"+expresion.source+" *$"),
-		foreach: new RegExp("^\\* cada +"+rules.var.source+" +en +"+rules.prop.source+" *$"),
-		function: new RegExp("^(procedimiento +)?"+rules.var.source+"( +"+rules.prop.source+"(?: *, *"+rules.prop.source+")*)? *$"),
-		print: new RegExp("^(mostrar|imprimir) +"+expresion.source+" *$"),
-		return: new RegExp("^(devolver|enviar) +"+expresion.source+" *$")
-	};
-
-
-	PC = input.split("\n");
-	var JSlines = [], lastDeep = 0, block = false;
-	
-	PC.forEach(function(line,i){
-		line = line.replace(/^( {2})+/,"\t"); // Transforma cualquier "doble espacio" en \t //console.log(line,(line.match(/^\t+/) || [""])[0].length);
-		var deep = (line.match(/^\t+/) || [""])[0].length; // Guarda la profundidad de tabulación de la linea
-		line = line.replace(/^\t+/,""); // Limpiamos cualquier tabulación inicial de la linea
-
-		//console.log(value.exec(line));
-
-		var iresult,r;
-		var lineCopy = "";
-		var lengthDiff = 0;
-		while (checkAll.global && (iresult = checkAll.exec(line))!== null) {
-			if(iresult[8]){
-				for(r = 0; r < pMaths.length; r++){
-					if(pMaths[r][0]==iresult[8]){
-						lengthDiff += pMaths[r][1].length - pMaths[r][0].length;
-						lineCopy += pMaths[r][1];
-						break;
+			if(indent>blockDeep){
+				throw "Indentación escesiva, linea "+(i+1);
+			} else if(line.match(/^\s+/)){
+				throw "Indentación mixta o incorrecta, linea "+(i+1);
+			} else if(line.match(/\s+$/)){
+				throw "Espacios en blanco sobrantes a final de linea, linea "+(i+1);
+			}
+			
+			if(indent<blockDeep){
+				for(var di = 0;di<blockDeep-indent;di++){
+					lastClosedBlock = blocklist.pop();
+					if(lastClosedBlock == "struct"){
+						removeLastComma(JSlines);
+						JSlines.push("\t".repeat(blocklist.length)+"};");
+					} else {
+						JSlines.push("\t".repeat(blocklist.length)+"}");
 					}
 				}
-			} else if(iresult[9]){
-				for(r = 0; r < pLogics.length; r++){
-					if(pLogics[r][0]==iresult[9]){
-						lengthDiff += pLogics[r][1].length - pLogics[r][0].length;
-						lineCopy += pLogics[r][1];
-						break;
-					}
-				}
-			} else if(iresult[10]){
-				lengthDiff += 1 - iresult[10].length;
-				lineCopy += ",";
-			/*
-			} else if(iresult[2] || iresult[3] || iresult[5]){
-				var replaced = iresult[0].substring(1).replace("@",".");
-				lineCopy += replaced;
-				lengthDiff += replaced.length - iresult[0].length;
-			*/
-			} else {
-	 			lineCopy += iresult[0];
-	 		}
-		}
+			}
 
-		if(line.length + lengthDiff == lineCopy.length){
-			line = lineCopy;
-			if(line===""){
-				line = "";
+			block = blocklist[blocklist.length-1];
+
+			if(line === "") {
+				// nothing
+			} else if(lastClosedBlock=="if" && line.match(sentences.elseif)){
+				removeLastIf(JSlines);
+				line = line.replacer(sentences.elseif,function(match,g,i){
+					return "} else if("+g[0]+"){";
+				});
+				blocklist.push("if");
+			} else if(lastClosedBlock=="if" && line.match(sentences.else)){
+				removeLastIf(JSlines);
+				line = line.replacer(sentences.else,function(match,g,i){
+					return "} else {";
+				});
+				blocklist.push("else");
+			} else if(block == "struct"){
+				if(line.match(sentences.asign)){
+					line = line.replacer(sentences.asign,function(match,g,i){
+						return g[1]+" : "+g[2]+",";
+					});
+				} else if(line.match(sentences.list)){
+					line = line.replacer(sentences.list,function(match,g,i){
+						return g[1]+" : ["+g[2]+"],";
+					});
+				} else {
+					line = "// Sentencia no valida en este bloque";
+				}
 			} else if(line.match(sentences.asign)){
-				if(block == "object"){
-					line = line.replace(sentences.asign,"$2 : $3,");
-				} else {
-					line = line.replace(sentences.asign,"$2 = $3;");
-				}
+				line = line.replacer(sentences.asign,function(match,g,i){
+					return g[1]+" = "+g[2]+";";
+				});
 			} else if(line.match(sentences.struct)){
-				line = line.replace(sentences.struct,"$2 = {");
-				block = "object";
-			} else if(line.match(sentences.list)){
-				if(block == "object"){
-					line = line.replace(sentences.list,"$2 : [$3],");
-				} else {
-					line = line.replace(sentences.list,"$2 = [$3];");
-				}
+				line = line.replacer(sentences.struct,function(match,g,i){
+					return g[1]+" = {";
+				});
+				blocklist.push("struct");
+			} else if(line.match(sentences.list)){	
+				line = line.replacer(sentences.list,function(match,g,i){
+					return g[1]+" = ["+g[2]+"];";
+				});
 			} else if(line.match(sentences.if)){
-				line = line.replace(sentences.if,"if($1){");
-				block = true;
-			} else if(line.match(sentences.elseif)){
-				line = line.replace(sentences.elseif,"} else if($1){");
-				block = true;
-			} else if(line.match(sentences.else)){
-				line = line.replace(sentences.else,"} else {");
-				block = true;
+				line = line.replacer(sentences.if,function(match,g,i){
+					return "if("+g[0]+"){";
+				});
+				blocklist.push("if");
 			} else if(line.match(sentences.for)){
-				line = line.replace(sentences.for,"for(var _i=0;_i<$1;_i++){");
-				block = true;
+				line = line.replacer(sentences.for,function(match,g,i){
+					return "for(var $=0;$<"+g[0]+";$++){";
+				});
+				blocklist.push("loop");
 			} else if(line.match(sentences.while)){
-				line = line.replace(sentences.while,"while($1){");
-				block = true;
+				line = line.replacer(sentences.while,function(match,g,i){
+					return "while("+g[0]+"){";
+				});
+				blocklist.push("loop");
 			} else if(line.match(sentences.foreach)){
-				line = line.replace(sentences.foreach,"for($1 in $2){");
-				block = true;
+				line = line.replacer(sentences.foreach,function(match,g,i){
+					return "for("+g[0]+" in "+g[1]+"){";
+				});
+				blocklist.push("loop");
 			} else if(line.match(sentences.function)){
-				line = line.replace(sentences.function,"function $2($3){");
-				block = true;
+				line = line.replacer(sentences.function,function(match,g,i){
+					return "function "+g[1]+"("+g[2]+"){";
+				});
+				blocklist.push("function");
 			} else if(line.match(sentences.print)){
-				line = line.replace(sentences.print,"console.log($2);");
+				line = line.replacer(sentences.print,function(match,g,i){
+					return "console.log("+g[1]+");";
+				});
 			} else if(line.match(sentences.return)){
-				line = line.replace(sentences.return,"return  $2;");
+				line = line.replacer(sentences.return,function(match,g,i){
+					return "return "+g[1]+";";
+				});
 			} else {
-				line = "// ERROR (sentencia): "+line;
+				line = "// ERROR: "+line;
 			}
-		} else {
-			line = "// ERROR (sintaxis): "+line;
-		}
-		
-		if(deep<lastDeep){
-			if(block == "object"){
-				line = "};\n" + line;
-			} else if(block == "array") {
-				line = "];\n" + line;
-			} else {
-				line = "}\n" + line;
-			}
-			block = false;
-		}
-		line = "\t".repeat(deep)+line;
-		lastDeep = deep;
-		JSlines.push(line);
-	});
 
+			if(line !== ""){
+				lastClosedBlock = false;
+			}
+			line = "\t".repeat(indent) + line;
+			JSlines.push(line);
+
+		});
+	} catch(e){
+		JSlines.push("\t".repeat(indent)+e);
+	}
+
+	JSlines.pop();
 	return JSlines.join("\n");
 }
 
@@ -235,20 +240,81 @@ function jailrun(source,consoleReplace){
 	} catch(e){
 		consoleReplace("Error en el código!\n"+e);
 		consoleReplace(toEval);
-		console.log(e);
+		//console.log(e);
 	}
 }
 
-/*
+function removeLastIf(JSlines){
+	for(var li=JSlines.length-1;li>=0;li--){
+		if(JSlines[li]!==""){
+			JSlines.splice(li,1);
+			break;
+		}
+	}
+}
 
-control de bloque
-	anidar multiples niveles
-	hacer bloques para listas
-	filtrar sentencias validas en el bloque
+function removeLastComma(JSlines){
+	for(var li=JSlines.length-1;li>=0;li--){
+		if(JSlines[li]!==""){
+			JSlines[li] = JSlines[li].slice(0,-1);
+			break;
+		}
+	}
+}
 
-Montar al reves, primero comprobación de sentencias en bruto, con control de bloques (flujo de sentencias)
-guiar las comprobaciones, sustituir la base de la sentencia y finalmente hacer la sustitución general de expresiones.
+function replacePS(sentence){
+	
+	// console.log(value.exec(line));
+	// 1 String, 2 prop, 3 var, 4 func, 5 number
+	// 6  Logic, 7 Math, 8 PLogic y 9 PMath
+	// 10 comma
+	// 11 spaces
+	// 12 asign op
+	// 13 reserved words (any word)
 
-Estaria genial poder "decir" lo que el usuario esta escribiendo, seguir los tipos de sentencia para dar outputs mas amigables
+	var iresult,r;
+	var result = "";
+	var isCall = call.exec(sentence);
+	if(isCall){
+		result = isCall[1].substring(1)+"("+replacePS(isCall[2])+")";
+	} else {
+		while (checkAll.global && (iresult = checkAll.exec(sentence))!== null) {
+			if(iresult[9]){
+				for(r = 0; r < pMaths.length; r++){
+					if(pMaths[r][0]==iresult[0]){
+						result += pMaths[r][1];
+						break;
+					}
+				}
+			} else if(iresult[8]){
+				for(r = 0; r < pLogics.length; r++){
+					if(pLogics[r][0]==iresult[0]){
+						result += pLogics[r][1];
+						break;
+					}
+				}
+			} else if(iresult[10]){
+				result += ",";
+			} else if(iresult[2] || iresult[3] || iresult[4]){
+				result += iresult[0].substring(1).replace(/\@|\#/,".");
+			} else {
+				result += iresult[0];
+			}
+		}
+	}
+	return result;
+}
 
-*/
+String.prototype.replacer = function(rule,callback){
+	return this.replace(rule,function(){
+		var l = arguments.length;
+		var match = arguments[0];
+		var groups = [];
+		var offset = arguments[l-2];
+		var input = arguments[l-1];
+		for(var i=1;i<arguments.length-2;i++){
+			groups.push(replacePS(arguments[i]));
+		}
+		return callback.call(this,match,groups,offset,input);
+	});
+};

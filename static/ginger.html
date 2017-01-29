@@ -81,14 +81,64 @@
 			<section>				
 				<div id="PC">
 					<h2>Pseudocodigo: </h2>
-					<textarea id="PCt"></textarea>
+					<textarea id="PCt">definir @numero1 = 1
+@numero2 = 2
+@texto = "Un texto"
+@union = @texto + " y mas texto"
+@operacion = @numero1 * @numero2
+@condicion = @numero1 >= @numero2
+@operacion = @numero1 multiplicado por @numero2
+@condicion = @numero1 es mayor o igual que @numero2
+@lista = 1 y 2 y 3
+@lista2 = 1,2,3
+@trabajador
+	@nombre = "Homer"
+	@id = 123456
+	@tags = "azul","verde","rojo"
+
+mostrar @trabajador
+
+si 1 > 0
+	mostrar "A"
+pero si 1<0
+	mostrar "B"
+si no
+	mostrar "C"
+
+si @numero2 > @numero1
+	mostrar "Es mayor"
+	repetir 2
+		mostrar "Repitiendo 2"
+	si 1
+		@a = 1
+
+@contador = 0
+repetir 5
+	@contador = @contador + 1
+	mostrar @contador
+	
+repetir si @contador>0
+	@contador = @contador - 1
+	mostrar @contador
+
+por cada @cosa en @lista
+	mostrar @cosa
+
+procedimiento #multiplicar @A y @B
+	devolver @A multiplicado por @B
+
+#dividir @A y @B
+	devolver @A / @B
+
+mostrar #multiplicar 2 y 2
+mostrar #dividir 10 y 5</textarea>
 				</div>
 				<div id="JS">
 					<h2>JavaScript:</h2>
 					<textarea id="JSt"></textarea>
 				</div>
 				<div id="CONSOLE">
-					<h2>Consola<button onclick="PCexe();">Probar</button></h2>
+					<h2>Resultado<button onclick="PCexe();">Probar</button></h2>
 					<textarea id="CONSOLEt"></textarea>
 				</div>
 			</section>

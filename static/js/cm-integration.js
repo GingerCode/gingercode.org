@@ -47,11 +47,11 @@ function cmIntegration(){
 	// Wrapper para ejecución via web
 	PCexe = function(){
 		jailrun(myCodeMirrorJS.getValue(),function(msg){
-			myCodeMirrorCONSOLE.getDoc().setValue(myCodeMirrorCONSOLE.getValue()+msg+"\n");
+			myCodeMirrorCONSOLE.getDoc().setValue(myCodeMirrorCONSOLE.getValue()+JSON.stringify(msg, null, '\t')+"\n");
 		});
 	};
 
-	myCodeMirrorPC.getDoc().setValue('mostrar "comenzando"\n@base = 0\nmostrar @base\n\nrepetir 5 veces\n\t@base = @base + 2\n\tmostrar @base\n\nmostrar "fin"\n');
+	myCodeMirrorPC.getDoc().setValue(document.getElementById("PCt").value);
 	PCtoJS();
 	PCexe();
 }
