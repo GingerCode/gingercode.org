@@ -114,7 +114,7 @@ function compile(input){
 			blockDeep = blocklist.length;
 			indent = indentType?(line.match(indentType) || [""])[0].replace(indentTypeReplace,"\t").length:0;
 			line = line.replace(indentType,"");
-
+			
 			if(indent>blockDeep){
 				throw "Indentación escesiva, linea "+(i+1);
 			} else if(line.match(/^\s+/)){
@@ -221,10 +221,9 @@ function compile(input){
 
 		});
 	} catch(e){
-		JSlines.push("\t".repeat(indent)+e);
+		JSlines.push("\t".repeat(indent)+"// "+e);
 	}
 
-	JSlines.pop();
 	return JSlines.join("\n");
 }
 
