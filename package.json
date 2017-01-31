@@ -41,5 +41,6 @@
     "gulp-jasmine": "2.4.2",
     "gulp-replace": "0.5.4",
     "jasmine-core": "2.5.2",
+    "jasmine-diff-matchers": "2.0.0"
   }
 }
