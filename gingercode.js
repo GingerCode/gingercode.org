@@ -318,7 +318,6 @@ String.prototype.replacer = function(rule,callback){
     });
 };
 
-
 module.exports = {
     rules, pLogics, pMaths, pLogicRule, pMathRule, operators, operands, checkAll, value, call, expresion, sentences, compile, jailrun, removeLastIf, removeLastComma, replacePS
 };
