@@ -4,6 +4,9 @@
   "version": "0.0.2",
   "author": "Open Source Weekends",
   "homepage": "http://gingercode.org",
+  "scripts": {
+    "test": "gulp test"
+  },
   "contributors": [
     {
       "name": "Javier Gallego Martín",
@@ -35,6 +38,8 @@
     "gulp": "3.9.1",
     "gulp-debug": "3.0.0",
     "gulp-eslint": "3.0.1",
-    "gulp-replace": "0.5.4"
+    "gulp-jasmine": "2.4.2",
+    "gulp-replace": "0.5.4",
+    "jasmine-core": "2.5.2",
   }
 }

@@ -3,19 +3,22 @@
 var gulp = require('gulp'),
     eslint = require('gulp-eslint'),
     debug = require('gulp-debug'),
-    replace = require('gulp-replace');
- 
+    replace = require('gulp-replace'),
+    jasmine = require('gulp-jasmine');
+
 gulp.task('client-generation', function () {
     return gulp.src('gingercode.js')
         .pipe(debug({title: 'client-generation (Scope):'}))
         .pipe(replace(/module.exports = {(.|\n)*?};/, ''))
         .pipe(gulp.dest('client'));
 });
-/*
+
 gulp.task('test', function () {
-    gulp.src(['./src/*.js'])
+    gulp.src('test/spec.js')
+        .pipe(debug({title: 'test (Scope):'}))
+        .pipe(jasmine())
 });
-*/
+
 
 gulp.task('lint', function() {
     var filesToLint = [
@@ -34,5 +37,4 @@ gulp.task('lint', function() {
             .pipe(eslint({fix:true}))
             .pipe(eslint.format())
             .pipe(gulp.dest('.'));
-            //.pipe(eslint.failAfterError());
 });
