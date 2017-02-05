@@ -19,7 +19,7 @@ Se organiza desde el canal #gingercode en Slack
 ```
 - En tu archivo..
 ```javascript
-    var gingercode = require("./gingercode.js");
+    var gingercode = require("gingercode");
     
     console.log(gingercode.compile("@contador = 1"));
 ```
