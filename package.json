@@ -1,17 +1,12 @@
 {
   "name": "gingercode",
   "description": "Translate from pseudocode to code",
-  "version": "0.0.1",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/OSWeekends/GingerCode.git"
-  },
-  "bugs": {
-    "url": "https://github.com/OSWeekends/GingerCode/issues"
-  },
-  "homepage": "http://gingercode.org",
-  "main": "gingercode.js",
+  "version": "0.0.2",
   "author": "Open Source Weekends",
+  "homepage": "http://gingercode.org",
+  "scripts": {
+    "test": "gulp test"
+  },
   "contributors": [
     {
       "name": "Javier Gallego Martín",
@@ -28,6 +23,24 @@
     {
       "name": "Ulises Gascón",
       "url": "https://github.com/ulisesGascon"
-    }],
-  "license": "GPL-3.0"
+    }
+  ],
+  "main": "./gingercode.js",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OSWeekends/GingerCode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OSWeekends/GingerCode/issues"
+  },
+  "devDependencies": {
+    "gulp": "3.9.1",
+    "gulp-debug": "3.0.0",
+    "gulp-eslint": "3.0.1",
+    "gulp-jasmine": "2.4.2",
+    "gulp-replace": "0.5.4",
+    "jasmine-core": "2.5.2",
+    "jasmine-diff-matchers": "2.0.0"
+  }
 }
