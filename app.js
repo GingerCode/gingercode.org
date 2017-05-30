@@ -1,5 +1,7 @@
 var project = require("pillars");
 
+project.configure({renderReload:true});
+
 
 // Pillars trae un servicio http por defecto. Así que lo que hacemos es tomar el servicio, 
 // mediante .get('nombre del servicio') y lo arrancamos
