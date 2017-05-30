@@ -40,7 +40,7 @@ p{
 	font-family: @font;	
 }
 
-header{
+.home header{
 	font-family: @font;
 	text-align: center;
 	padding-top: 80px;
@@ -50,40 +50,97 @@ header{
 		font-size: 3em;
 	}
 	img{
-		max-width: 60%;
+		max-width: 50%;
 		height: auto;
 	}
 }
+
+.terminal header{
+	padding-top: 80px;
+	text-align: center;
+	img{
+		max-width: 40%;
+	}
+
+}
+
+.code{
+	background-color: @red-ginger;
+	color: white;
+	padding: 2px;
+}
+
+article.welcome{
+	background-color: @black-ginger;
+	color: white;
+	font-size: 18px;
+	margin-top: 40px;
+	position: relative;
+	h2{
+		display: none;
+	}
+	.contents{
+		padding: 40px 10%;
+		text-align: left;
+		ol{
+			li{
+				padding: 5px 0;
+				line-height: 33px;
+			}
+		}
+	}
+}
+
+.consolas{
+	margin:63px 0 50px 0;
+	padding: 0 10%;
+}
+
 #space section{
 	text-align: center;
 }
-h2{
-	
-}
+
 #PC, #JS, #CONSOLE{
 	text-align: left;
-	font-family: 'Open Sans', sans-serif;
-} 
+}
+
 #PC, #JS{
 	width: 49%;
-	display: inline-block;
-	//border: 1px solid red;
+	display: inline-block;	
+	//background-color: @red-ginger;
+	h2{
+		//padding: 0 20px;
+		font-family: @font;
+		text-align: center;
+		font-size: 75px;
+		margin: 10px 0 15px 0;
+	}
 }
+
 #CONSOLE{
 	margin: 7px;
-	border: 2px solid #eee;
 }
-button {
-	vertical-align: top;
-	font-size: 15px;
-	padding: 3px 8px;
+
+button{
+	border: 1px solid white;
+	border-radius: 10px;
+	color: white;
+	background-color: @black-ginger;
+	padding: 10px 20px;
+	&:hover{
+		background-color:@red-ginger;		
+		cursor:pointer;
+	}
+}
+button.test{
+	vertical-align: top;	
 	margin: 3px 0;
-	float: right;
-	font-weight: bold;
-	background-color: #444444;
-	color: #ffffff;
-	border: 1px solid #555555;
-	border-radius: 8px;
+}
+
+button.next{
+	position: absolute;
+	bottom: 20px;
+	right: 10%;	
 }
 
 nav#main{
@@ -137,10 +194,26 @@ nav#main{
 	}
 }
 
+.terminal{
+	header{
+		h1{
+			display: none;
+		}
+		
+	}
+}
+
 footer{
 	width: 100%;
 	background-color: @black-ginger;		
 	min-height: 200px;
+	a{
+		color: white;
+		text-decoration: underline;
+		&:hover{
+			font-weight:800;
+		}
+	}
 	.contents{
 		padding: 80px 120px;
 		text-align: center;

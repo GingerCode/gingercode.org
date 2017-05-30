@@ -1,8 +1,5 @@
 <html>
-	<head>
-		<!-- Estilos de fuente. Los he cogido a la ligera...  -->
-		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-
+	<head>			
 		<!-- Librería codemirror -->
 		<script src="/js/codemirror.js"></script>
 		<link rel="stylesheet" href="/css/codemirror.css">
@@ -15,73 +12,47 @@
 		<!-- Algoritmo para pasar de pseudocodigo a JS-->
 		<script src="/js/pc-js.js"></script>
 		
-		<!-- ######### -->
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
 
 		<title>Ginger Code</title>
 		
-		<!-- Hoja de estilos, de momento la tiro aquí -->
-		<style>
-			body{
-				background-color: #eeeeee;
-			}
-			#space{
-				max-width: 1000px;
-				margin: 0 auto;				
-			}
-			header{
-				font-family: 'Open Sans', sans-serif;
-				text-align: center;
-			}
-			#space section{
-				text-align: center;
-			}
-			h2{
-				color: #ffffff;
-				background-color: #111111;
-				margin: 0;
-				padding: 10px 20px;
-				border-bottom: 1px solid #444444;
-			}
-			#PC, #JS, #CONSOLE{
-				text-align: left;
-				font-family: 'Open Sans', sans-serif;
-			} 
-			#PC, #JS{
-				width: 49%;
-				display: inline-block;
-				//border: 1px solid red;
-			}
-			#CONSOLE{
-				margin: 7px;
-				border: 2px solid #eee;
-			}
-			button {
-				vertical-align: top;
-				font-size: 15px;
-				padding: 3px 8px;
-				margin: 3px 0;
-				float: right;
-				font-weight: bold;
-				background-color: #444444;
-				color: #ffffff;
-				border: 1px solid #555555;
-				border-radius: 8px;
-			}
-		</style>
-
 	</head>
 
 	<!-- Comienza la página -->
-	<body onload="cmIntegration();">
+	<body onload="cmIntegration();" class="terminal">
 		<header>
-			<h1>Ginger Code</h1>
-			<p>¡¡Aprende a programar con Ginger Code!!</p>
+			<h1>Ginger Code Terminal</h1>			
+			<img src="img/logo-h.png">			
 		</header>
+		<nav id="main">
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="ginger.html">Comienza!</a></li>				
+			</ul>
+		</nav>
 		<div id="space">
-			<section>				
+			<section class="tutorial">
+				<article class="welcome">
+					<h2>Bienvenido/a!!</h2>
+					<div class="contents">
+						<ol>
+							<li>En la ventana de la izquierda puedes escribir en pseudocódigo, y se irá traduciendo a código JavaScript en la ventana de la derecha.</li>
+							<li>Para ejecutar el código resultante, clica el botón Probar, en la tercera ventana de resultado, y se ejecutará el código.</li>
+							<li>Como puedes observar en la ventana de la derecha está escrito  <span class="code"> mostrar "Hola Mundo"</span>. </li>
+							<li>Modifícalo, y escribe:  <span class="code"> mostrar "Hola!! este es mi primer pseudocódigo!!"</span>. Este comando es el que usarás cada vez que quieras mostrar algo por consola:  <span class="code"> mostrar elemento-a-mostrar</span>.</li>
+						</ol>						
+					</div>
+					<button class="next">Siguiente</button>
+				</article>	
+			</section>
+
+
+			<section class="consolas">							
 				<div id="PC">
-					<h2>Pseudocodigo: </h2>
-					<textarea id="PCt">definir @numero1 = 1
+					<h2>Pseudocódigo</h2>
+					<textarea id="PCt">mostrar "Hola Mundo!!"
+definir @numero1 = 1
 @numero2 = 2
 @texto = "Un texto"
 @union = @texto + " y mas texto"
@@ -134,14 +105,19 @@ mostrar #multiplicar 2 y 2
 mostrar #dividir 10 y 5</textarea>
 				</div>
 				<div id="JS">
-					<h2>JavaScript:</h2>
+					<h2>JavaScript</h2>
 					<textarea id="JSt"></textarea>
 				</div>
 				<div id="CONSOLE">
-					<h2>Resultado<button onclick="PCexe();">Probar</button></h2>
+					<button class="test" onclick="PCexe();">Probar</button>
 					<textarea id="CONSOLEt"></textarea>
 				</div>
 			</section>
 		</div>
+		<footer>
+			<div class="contents">
+				<p>Herramienta totalmente gratuita, desarrollada con amor por la comunidad <a href="http://osweekends.com/" target="_blank">Open Source Weekend</a>, para ayudar a las personas a introducirse en la programación.</p>
+			</div>			
+		</footer>
 	</body>
 </html>
