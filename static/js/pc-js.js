@@ -18,14 +18,14 @@ var pLogics = [
 	["es menor o igual que","<="],["menor o igual que","<="],["menor o igual","<="],
 	["es mayor que",">"],["mayor que",">"],["mayor",">"],
 	["es menor que","<"],["menor que","<"],["menor","<"],
-	["es distinto que","!="],["distinto que","!="],["distinto","!="],["no es","!="],
-	["es igual que","=="],["igual que","=="],["igual","=="],["es","=="]
+	["es distinto que","!="],["distinto que","!="],["distinto","!="],["no es","!=="],
+	["es igual que","=="],["igual que","=="],["igual","=="],["es","==="],["identico","==="]
 ];
 
 var pMaths = [
 	["menos","-"],
 	["mas","+"],["sumar","+"],["sumado","+"],
-	["multiplicado por","*"],["multiplicado","*"],
+	["multiplicado por","*"],["multiplicado","*"],["por","*"],
 	["dividido entre","/"],["dividido","/"],
 	["resto entre","%"],["resto","%"]
 ];
