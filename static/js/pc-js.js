@@ -68,6 +68,7 @@ var call = 	new RegExp("(?:"+rules.func.source+" +("+operands.source+"(?: *(?: y
 var expresion = new RegExp("("+value.source+"|"+call.source+")","g");
 
 var sentences = {
+	comment: new RegExp("^\/\/.*$"),
 	asign: new RegExp("^(definir )? *"+rules.var.source+" +\\= +"+expresion.source+"$"),
 	struct: new RegExp("^(definir )? *"+rules.var.source+"$"),
 	list: new RegExp("^(definir )? *"+rules.var.source+" +\\= +("+expresion.source+"(?: *(?: y |,) *"+expresion.source+")+)$"),
@@ -80,6 +81,7 @@ var sentences = {
 	function: new RegExp("^(procedimiento +)?"+rules.func.source+"( +"+rules.prop.source+"(?: *(?: y |,) *"+rules.prop.source+")*)?$"),
 	print: new RegExp("^(mostrar|imprimir) +"+expresion.source+"$"),
 	return: new RegExp("^(devolver|enviar) +"+expresion.source+"$"),
+	prompt: new RegExp("^(solicitar|pedir) +"+rules.var.source+"$"),
 	expresion: new RegExp("^"+expresion.source+"$")
 };
 
@@ -137,7 +139,7 @@ function compile(input){
 
 			block = blocklist[blocklist.length-1];
 
-			if(line === "") {
+			if(line === "" || line.match(sentences.comment)) {
 				// nothing
 			} else if(lastClosedBlock=="if" && line.match(sentences.elseif)){
 				removeLastIf(JSlines);
@@ -165,16 +167,16 @@ function compile(input){
 				}
 			} else if(line.match(sentences.asign)){
 				line = line.replacer(sentences.asign,function(match,g,i){
-					return g[1]+" = "+g[2]+";";
+					return (/^definir /.test(line)?"var ":"")+g[1]+" = "+g[2]+";";
 				});
 			} else if(line.match(sentences.struct)){
 				line = line.replacer(sentences.struct,function(match,g,i){
-					return g[1]+" = {";
+					return (/^definir /.test(line)?"var ":"")+g[1]+" = {";
 				});
 				blocklist.push("struct");
 			} else if(line.match(sentences.list)){	
 				line = line.replacer(sentences.list,function(match,g,i){
-					return g[1]+" = ["+g[2]+"];";
+					return (/^definir /.test(line)?"var ":"")+g[1]+" = ["+g[2]+"];";
 				});
 			} else if(line.match(sentences.if)){
 				line = line.replacer(sentences.if,function(match,g,i){
@@ -208,6 +210,10 @@ function compile(input){
 			} else if(line.match(sentences.return)){
 				line = line.replacer(sentences.return,function(match,g,i){
 					return "return "+g[1]+";";
+				});
+			} else if(line.match(sentences.prompt)){
+				line = line.replacer(sentences.prompt,function(match,g,i){
+					return "var "+g[1]+" = window.prompt('"+g[1]+"');";
 				});
 			} else {
 				line = "// ERROR: "+line;
