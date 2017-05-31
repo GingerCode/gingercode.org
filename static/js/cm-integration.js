@@ -6,7 +6,7 @@ function cmIntegration(){
 	var myCodeMirrorPC = CodeMirror.fromTextArea(
 		document.getElementById("PCt"),
 		{
-			mode: 'javascript',
+			//mode: 'javascript',
 			lineNumbers: true,
 			readOnly: false,
 			theme: 'ambiance'
@@ -17,7 +17,7 @@ function cmIntegration(){
 		{
 			mode: 'javascript',
 			lineNumbers: true,
-			readOnly: false,
+			readOnly: true,
 			theme: 'ambiance'
 		}
 	);
@@ -31,9 +31,10 @@ function cmIntegration(){
 	);
 	// Atach PC change event
 	myCodeMirrorPC.on("change", function(cm, change) {
-		myCodeMirrorJS.getDoc().setValue(compile(myCodeMirrorPC.getValue()));
+		PCtoJS();
 	});
 	window.cms = {
+		valid: false,
 		pc: myCodeMirrorPC,
 		js: myCodeMirrorJS,
 		c: myCodeMirrorCONSOLE
@@ -41,7 +42,17 @@ function cmIntegration(){
 
 	// Wrapper para llamadas al compilador
 	PCtoJS = function(){
-		myCodeMirrorJS.getDoc().setValue(compile(myCodeMirrorPC.getValue()));
+		window.cms.c.getDoc().setValue("");
+		var errors = document.getElementById("errors");
+		try {
+			var compilation = compile(myCodeMirrorPC.getValue());
+			myCodeMirrorJS.getDoc().setValue(compilation);
+			errors.innerHTML = "";
+			window.cms.valid = true;
+		} catch(e){
+			window.cms.valid = false;
+			errors.innerHTML = e;
+		}
 	};
 
 	// Wrapper para ejecución via web
@@ -52,6 +63,6 @@ function cmIntegration(){
 	};
 
 	myCodeMirrorPC.getDoc().setValue(document.getElementById("PCt").value);
-	PCtoJS();
+	//PCtoJS();
 	//PCexe();
 }

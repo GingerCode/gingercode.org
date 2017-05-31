@@ -87,8 +87,11 @@ var sentences = {
 
 
 function compile(input){
+	console.log("compiling...");
 	PC = (input+"\n").split("\n");
 	var JSlines = [];
+	var lineNumer;
+	var lineContents;
 	var blocklist = [];
 	var block;
 	var lastClosedBlock;
@@ -100,6 +103,8 @@ function compile(input){
 
 	try {
 		PC.forEach(function(line,i){
+			lineNumer = i+1;
+			lineContents = line;
 			indent = 0;
 			if(line.match(/^\s+/) && !indentType){
 				indentTypes.forEach(function(r,i){
@@ -109,7 +114,7 @@ function compile(input){
 					}
 				});
 				if(!indentType){
-					throw "Tipo de indentación no válido, linea "+(i+1);
+					throw "Tipo de indentación no válida, debes identar con dobles espacios o tabulaciones";
 				}
 			}
 
@@ -118,11 +123,11 @@ function compile(input){
 			line = line.replace(indentType,"");
 			
 			if(indent>blockDeep){
-				throw "Indentación escesiva, linea "+(i+1);
+				throw "Indentación escesiva, solo se debe identar una vez por bloque";
 			} else if(line.match(/^\s+/)){
-				throw "Indentación mixta o incorrecta, linea "+(i+1);
+				throw "Indentación mixta o incorrecta, debes usar siempre el mismo tipo de identación";
 			} else if(line.match(/\s+$/)){
-				throw "Espacios en blanco sobrantes a final de linea, linea "+(i+1);
+				throw "Espacios en blanco sobrantes a final de linea";
 			}
 			
 			if(indent<blockDeep){
@@ -163,7 +168,7 @@ function compile(input){
 						return g[1]+" : ["+g[2]+"],";
 					});
 				} else {
-					line = "// Sentencia no valida en este bloque";
+					throw "Sentencia no valida dentro de este bloque";
 				}
 			} else if(line.match(sentences.asign)){
 				line = line.replacer(sentences.asign,function(match,g,i){
@@ -216,7 +221,7 @@ function compile(input){
 					return "var "+g[1]+" = window.prompt('"+g[1]+"');";
 				});
 			} else {
-				line = "// ERROR: "+line;
+				throw "Sentencia incorrecta";
 			}
 
 			if(line !== ""){
@@ -227,25 +232,32 @@ function compile(input){
 
 		});
 	} catch(e){
-		JSlines.push("\t".repeat(indent)+"// "+e);
+		throw "<strong>"+e + "<em>, linea "+lineNumer+".</em></strong><span> "+lineContents+"</span>";
+		//JSlines.push("\t".repeat(indent)+"// "+e);
 	}
+
+	console.log("compiled!");
 
 	return JSlines.join("\n");
 }
 
 function jailrun(source,consoleReplace){
 	window.cms.c.getDoc().setValue("");
-	try {
-		var toEval =
-			"(function(){\n"+
-			"var console = {log:consoleReplace};\n"+
-			window.cms.js.getValue()+
-			"})();";
-		eval(toEval);
-	} catch(e){
-		consoleReplace("Error en el código!\n"+e);
-		consoleReplace(toEval);
-		//console.log(e);
+	if(!window.cms.valid){
+		//consoleReplace("Debes corregir los errores antes de probar.");
+	} else {
+		try {
+			var toEval =
+				"(function(){\n"+
+				"var console = {log:consoleReplace};\n"+
+				window.cms.js.getValue()+
+				"})();";
+			eval(toEval);
+		} catch(e){
+			consoleReplace("Error en el código!\n"+e);
+			consoleReplace(toEval);
+			//console.log(e);
+		}
 	}
 }
 
