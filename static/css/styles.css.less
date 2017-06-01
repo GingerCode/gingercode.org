@@ -27,7 +27,6 @@
 @black-ginger: #232328;
 @font: 'ApercuPro-Regular';
 
-
 body{
 	background-color: @background;
 	margin: 0;
@@ -40,7 +39,7 @@ p{
 	font-family: @font;	
 }
 
-.home header{
+header{
 	font-family: @font;
 	text-align: center;
 	padding-top: 80px;
@@ -52,6 +51,12 @@ p{
 	img{
 		max-width: 50%;
 		height: auto;
+	}
+	.main-logo {
+		width: 100%;
+	}
+	.secondary-img {
+		display: none;
 	}
 }
 
@@ -105,8 +110,7 @@ article.welcome{
 }
 
 #PC, #JS{
-	width: 49%;
-	display: inline-block;	
+	width: 100%;
 	//background-color: @red-ginger;
 	h2{
 		//padding: 0 20px;
@@ -117,47 +121,8 @@ article.welcome{
 	}
 }
 
-.hiddenJS {
-	padding-top: 20px;
-}
-
-#JS {
-	display: none;
-}
-#PC, #JS {
-	width: 100%;
-}
-#test {
-	position: absolute;
-	top: 5;
-	right: 5;
-	z-index: 1000;
-}
-
-#errors {
-	strong {
-    color: #bb2222;
-    font-size: 20px;
-		em {
-	    color: #444444;
-	    font-weight: normal;
-	    font-size: 14px;
-		}
-	}
-	span {
-    color: #555;
-    display: block;
-    text-indent: 20px;
-	}
-}
-
 #CONSOLE{
-	position: relative;
-	padding: 15px;
-	margin-top: 10px;
-	border: 1px solid #cccccc;
-	background-color: #ffffff;
-	//margin: 7px;
+	margin: 7px;
 }
 
 button{
@@ -206,39 +171,29 @@ nav#main{
 	}
 }
 
-.home{
-	h1{
-		display: none;
-	}
-	#space{
-		background-color: @red-ginger;
-		margin-top: 40px;
-		article{
-			h2{
-				display: none;
-			}
-			div.contents{
-				color: #ffffff;
-				padding: 40px 120px;
-				margin-top: 20px;
-				text-align: center;
-				font-size: 30px;
-				p{										
-					margin:0;
-					padding: 40px 0;
-				}
-			}
-
-		}
-	}
+h1{
+	display: none;
 }
 
-.terminal{
-	header{
-		h1{
+#space{
+	background-color: @red-ginger;
+	margin-top: 40px;
+	article{
+		h2{
 			display: none;
 		}
-		
+		div.contents{
+			color: #ffffff;
+			padding: 40px 120px;
+			margin-top: 20px;
+			text-align: center;
+			font-size: 30px;
+			p{										
+				margin:0;
+				padding: 40px 0;
+			}
+		}
+
 	}
 }
 
@@ -261,4 +216,34 @@ footer{
 			font-size: 18px;
 		}	
 	}	
+}
+
+@media(min-width:768px) {
+	header {
+		display: flex;
+		.main-logo {
+			width: 49%;
+		}
+		.secondary-img {
+			width: 49%;
+			display: block;
+			background-image: url("../img/pc.png");
+		}
+	}
+}
+
+@media(min-width:1200px) {
+	#PC, #JS{
+		width: 49%;
+		display: inline-block;	
+		//background-color: @red-ginger;
+		h2{
+			//padding: 0 20px;
+			font-family: @font;
+			text-align: center;
+			font-size: 75px;
+			margin: 10px 0 15px 0;
+		}
+	}
+
 }
