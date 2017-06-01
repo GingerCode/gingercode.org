@@ -5,7 +5,7 @@ var rules = {
 	var: /(\@[a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
 	func: /([\#][a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
 	number: /(\-?[0-9]+(?:\.[0-9]+)?)/,
-	logic: /(\>\=|\<\=|\=\=\=|\=\=|\!\=|\!\=\=|\>|\<)/,
+	logic: /(\>\=|\<\=|\=\=\=|\=\=|\!\=|\!\=\=|\>|\<|\|\||\&\&)/,
 	math: /(\+|\-|\*|\/|\%)/,
 	comma: /( y |,)/,
 	space: /( +)/,
@@ -14,6 +14,7 @@ var rules = {
 };
 
 var pLogics = [
+	["OR","||"],["AND","&&"],["O","||"],["Y","&&"],
 	["es mayor o igual que",">="],["mayor o igual que",">="],["mayor o igual",">="],
 	["es menor o igual que","<="],["menor o igual que","<="],["menor o igual","<="],
 	["es mayor que",">"],["mayor que",">"],["mayor",">"],
