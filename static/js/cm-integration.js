@@ -62,6 +62,18 @@ function cmIntegration(){
 		});
 	};
 
+	showJSoutput = function(){
+		var display = document.getElementById("JS").style.display;
+		if(display==='block'){
+			document.getElementById("JS").style.display = 'none';
+			document.getElementById("showJS").innerHTML = 'Ver JS';
+		} else {
+			document.getElementById("JS").style.display = 'block';
+			document.getElementById("showJS").innerHTML = 'Ocultar JS';
+		}
+		
+	};
+
 	myCodeMirrorPC.getDoc().setValue(document.getElementById("PCt").value);
 	//PCtoJS();
 	//PCexe();

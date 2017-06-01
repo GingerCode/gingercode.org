@@ -1,5 +1,6 @@
 <html>
-	<head>			
+	<head>
+		<title>Ginger Code</title>		
 		<!-- Librería codemirror -->
 		<script src="/js/codemirror.js"></script>
 		<link rel="stylesheet" href="/css/codemirror.css">
@@ -15,8 +16,15 @@
 		<!-- CSS -->
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
 
-		<title>Ginger Code</title>
-		
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-100289260-1', 'auto');
+			ga('send', 'pageview');
+		</script>
 	</head>
 
 	<!-- Comienza la página -->
@@ -37,13 +45,12 @@
 					<h2>Bienvenido/a!!</h2>
 					<div class="contents">
 						<ol>
-							<li>En la ventana de la izquierda puedes escribir en pseudocódigo, y se irá traduciendo a código JavaScript en la ventana de la derecha.</li>
-							<li>Para ejecutar el código resultante, clica el botón Probar, en la tercera ventana de resultado, y se ejecutará el código.</li>
-							<li>Como puedes observar en la ventana de la derecha está escrito  <span class="code"> mostrar "Hola Mundo"</span>. </li>
-							<li>Modifícalo, y escribe:  <span class="code"> mostrar "Hola!! este es mi primer pseudocódigo!!"</span>. Este comando es el que usarás cada vez que quieras mostrar algo por consola:  <span class="code"> mostrar elemento-a-mostrar</span>.</li>
+							<li>En el cuadro de texto más abajo puedes escribir código Ginger, y probarlo!</li>
+							<li>Para ejecutar el código resultante, clica el botón Probar, podras ver el resultado en la consola inferior.</li>
+							<li>Proximamente tendremos disponible un tutorial interactivo en esta página para aprender Ginger y los conceptos básicos de programación.</li>
+							<li>Temporalmente, a modo de demostración, hemos dejado un código que muestra diferentes sentencias Ginger y su funcionamiento</li>
 						</ol>						
 					</div>
-					<button class="next">Siguiente</button>
 				</article>	
 			</section>
 
@@ -124,14 +131,17 @@ procedimiento #multiplicar @A y @B
 mostrar #multiplicar 2 y 2
 mostrar #dividir 10 y 5</textarea>
 				</div>
-				<div id="JS">
-					<h2>JavaScript</h2>
-					<textarea id="JSt"></textarea>
-				</div>
 				<div id="CONSOLE">
 					<div id="errors"></div>
 					<button id="test" onclick="PCexe();">Probar</button>
 					<textarea id="CONSOLEt"></textarea>
+				</div>
+				<div class="hiddenJS">
+					<button id="showJS" onclick="showJSoutput();">Ver JS</button>
+					<div id="JS">
+						<!-- <h2>JavaScript</h2> -->
+						<textarea id="JSt"></textarea>
+					</div>
 				</div>
 			</section>
 		</div>

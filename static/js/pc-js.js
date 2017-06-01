@@ -237,8 +237,14 @@ function compile(input){
 	}
 
 	console.log("compiled!");
+	var libs = "// Funciones precargadas\n";
+	libs += "function aleatorio(min,max){\n"+
+						"\tmin = Math.ceil(min);\n"+
+						"\tmax = Math.floor(max);\n"+
+						"\treturn Math.floor(Math.random() * (max - min + 1)) + min;\n"+
+					"}\n";
 
-	return JSlines.join("\n");
+	return JSlines.join("\n")+libs;
 }
 
 function jailrun(source,consoleReplace){
