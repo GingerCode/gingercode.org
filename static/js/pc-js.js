@@ -5,7 +5,7 @@ var rules = {
 	var: /(\@[a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
 	func: /([\#][a-zA-Z\_\-][a-zA-Z\_\-0-9]*)/,
 	number: /(\-?[0-9]+(?:\.[0-9]+)?)/,
-	logic: /(\>\=|\<\=|\=\=|\!\=|\>|\<)/,
+	logic: /(\>\=|\<\=|\=\=\=|\=\=|\!\=|\!\=\=|\>|\<|\|\||\&\&)/,
 	math: /(\+|\-|\*|\/|\%)/,
 	comma: /( y |,)/,
 	space: /( +)/,
@@ -14,6 +14,7 @@ var rules = {
 };
 
 var pLogics = [
+	["OR","||"],["AND","&&"],["O","||"],["Y","&&"],
 	["es mayor o igual que",">="],["mayor o igual que",">="],["mayor o igual",">="],
 	["es menor o igual que","<="],["menor o igual que","<="],["menor o igual","<="],
 	["es mayor que",">"],["mayor que",">"],["mayor",">"],
@@ -68,6 +69,7 @@ var call = 	new RegExp("(?:"+rules.func.source+" +("+operands.source+"(?: *(?: y
 var expresion = new RegExp("("+value.source+"|"+call.source+")","g");
 
 var sentences = {
+	comment: new RegExp("^\/\/.*$"),
 	asign: new RegExp("^(definir )? *"+rules.var.source+" +\\= +"+expresion.source+"$"),
 	struct: new RegExp("^(definir )? *"+rules.var.source+"$"),
 	list: new RegExp("^(definir )? *"+rules.var.source+" +\\= +("+expresion.source+"(?: *(?: y |,) *"+expresion.source+")+)$"),
@@ -80,13 +82,17 @@ var sentences = {
 	function: new RegExp("^(procedimiento +)?"+rules.func.source+"( +"+rules.prop.source+"(?: *(?: y |,) *"+rules.prop.source+")*)?$"),
 	print: new RegExp("^(mostrar|imprimir) +"+expresion.source+"$"),
 	return: new RegExp("^(devolver|enviar) +"+expresion.source+"$"),
+	prompt: new RegExp("^(solicitar|pedir) +"+rules.var.source+"$"),
 	expresion: new RegExp("^"+expresion.source+"$")
 };
 
 
 function compile(input){
+	console.log("compiling...");
 	PC = (input+"\n").split("\n");
 	var JSlines = [];
+	var lineNumer;
+	var lineContents;
 	var blocklist = [];
 	var block;
 	var lastClosedBlock;
@@ -98,6 +104,8 @@ function compile(input){
 
 	try {
 		PC.forEach(function(line,i){
+			lineNumer = i+1;
+			lineContents = line;
 			indent = 0;
 			if(line.match(/^\s+/) && !indentType){
 				indentTypes.forEach(function(r,i){
@@ -107,7 +115,7 @@ function compile(input){
 					}
 				});
 				if(!indentType){
-					throw "Tipo de indentación no válido, linea "+(i+1);
+					throw "Tipo de indentación no válida, debes identar con dobles espacios o tabulaciones";
 				}
 			}
 
@@ -116,11 +124,11 @@ function compile(input){
 			line = line.replace(indentType,"");
 			
 			if(indent>blockDeep){
-				throw "Indentación escesiva, linea "+(i+1);
+				throw "Indentación escesiva, solo se debe identar una vez por bloque";
 			} else if(line.match(/^\s+/)){
-				throw "Indentación mixta o incorrecta, linea "+(i+1);
+				throw "Indentación mixta o incorrecta, debes usar siempre el mismo tipo de identación";
 			} else if(line.match(/\s+$/)){
-				throw "Espacios en blanco sobrantes a final de linea, linea "+(i+1);
+				throw "Espacios en blanco sobrantes a final de linea";
 			}
 			
 			if(indent<blockDeep){
@@ -137,7 +145,7 @@ function compile(input){
 
 			block = blocklist[blocklist.length-1];
 
-			if(line === "") {
+			if(line === "" || line.match(sentences.comment)) {
 				// nothing
 			} else if(lastClosedBlock=="if" && line.match(sentences.elseif)){
 				removeLastIf(JSlines);
@@ -161,20 +169,20 @@ function compile(input){
 						return g[1]+" : ["+g[2]+"],";
 					});
 				} else {
-					line = "// Sentencia no valida en este bloque";
+					throw "Sentencia no valida dentro de este bloque";
 				}
 			} else if(line.match(sentences.asign)){
 				line = line.replacer(sentences.asign,function(match,g,i){
-					return g[1]+" = "+g[2]+";";
+					return (/^definir /.test(line)?"var ":"")+g[1]+" = "+g[2]+";";
 				});
 			} else if(line.match(sentences.struct)){
 				line = line.replacer(sentences.struct,function(match,g,i){
-					return g[1]+" = {";
+					return (/^definir /.test(line)?"var ":"")+g[1]+" = {";
 				});
 				blocklist.push("struct");
 			} else if(line.match(sentences.list)){	
 				line = line.replacer(sentences.list,function(match,g,i){
-					return g[1]+" = ["+g[2]+"];";
+					return (/^definir /.test(line)?"var ":"")+g[1]+" = ["+g[2]+"];";
 				});
 			} else if(line.match(sentences.if)){
 				line = line.replacer(sentences.if,function(match,g,i){
@@ -209,8 +217,12 @@ function compile(input){
 				line = line.replacer(sentences.return,function(match,g,i){
 					return "return "+g[1]+";";
 				});
+			} else if(line.match(sentences.prompt)){
+				line = line.replacer(sentences.prompt,function(match,g,i){
+					return "var "+g[1]+" = window.prompt('"+g[1]+"');";
+				});
 			} else {
-				line = "// ERROR: "+line;
+				throw "Sentencia incorrecta";
 			}
 
 			if(line !== ""){
@@ -221,25 +233,38 @@ function compile(input){
 
 		});
 	} catch(e){
-		JSlines.push("\t".repeat(indent)+"// "+e);
+		throw "<strong>"+e + "<em>, linea "+lineNumer+".</em></strong><span> "+lineContents+"</span>";
+		//JSlines.push("\t".repeat(indent)+"// "+e);
 	}
 
-	return JSlines.join("\n");
+	console.log("compiled!");
+	var libs = "// Funciones precargadas\n";
+	libs += "function aleatorio(min,max){\n"+
+						"\tmin = Math.ceil(min);\n"+
+						"\tmax = Math.floor(max);\n"+
+						"\treturn Math.floor(Math.random() * (max - min + 1)) + min;\n"+
+					"}\n";
+
+	return JSlines.join("\n")+libs;
 }
 
 function jailrun(source,consoleReplace){
 	window.cms.c.getDoc().setValue("");
-	try {
-		var toEval =
-			"(function(){\n"+
-			"var console = {log:consoleReplace};\n"+
-			window.cms.js.getValue()+
-			"})();";
-		eval(toEval);
-	} catch(e){
-		consoleReplace("Error en el código!\n"+e);
-		consoleReplace(toEval);
-		//console.log(e);
+	if(!window.cms.valid){
+		//consoleReplace("Debes corregir los errores antes de probar.");
+	} else {
+		try {
+			var toEval =
+				"(function(){\n"+
+				"var console = {log:consoleReplace};\n"+
+				window.cms.js.getValue()+
+				"})();";
+			eval(toEval);
+		} catch(e){
+			consoleReplace("Error en el código!\n"+e);
+			consoleReplace(toEval);
+			//console.log(e);
+		}
 	}
 }
 

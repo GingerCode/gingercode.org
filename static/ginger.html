@@ -1,8 +1,6 @@
 <html>
 	<head>
-		<!-- Estilos de fuente. Los he cogido a la ligera...  -->
-		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-
+		<title>Ginger Code</title>		
 		<!-- Librería codemirror -->
 		<script src="/js/codemirror.js"></script>
 		<link rel="stylesheet" href="/css/codemirror.css">
@@ -15,89 +13,81 @@
 		<!-- Algoritmo para pasar de pseudocodigo a JS-->
 		<script src="/js/pc-js.js"></script>
 		
-		<!-- ######### -->
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
 
-		<title>Ginger Code</title>
-		
-		<!-- Hoja de estilos, de momento la tiro aquí -->
-		<style>
-			body{
-				background-color: #eeeeee;
-			}
-			#space{
-				max-width: 1000px;
-				margin: 0 auto;				
-			}
-			header{
-				font-family: 'Open Sans', sans-serif;
-				text-align: center;
-			}
-			#space section{
-				text-align: center;
-			}
-			h2{
-				color: #ffffff;
-				background-color: #111111;
-				margin: 0;
-				padding: 10px 20px;
-				border-bottom: 1px solid #444444;
-			}
-			#PC, #JS, #CONSOLE{
-				text-align: left;
-				font-family: 'Open Sans', sans-serif;
-			} 
-			#PC, #JS{
-				width: 49%;
-				display: inline-block;
-				//border: 1px solid red;
-			}
-			#CONSOLE{
-				margin: 7px;
-				border: 2px solid #eee;
-			}
-			button {
-				vertical-align: top;
-				font-size: 15px;
-				padding: 3px 8px;
-				margin: 3px 0;
-				float: right;
-				font-weight: bold;
-				background-color: #444444;
-				color: #ffffff;
-				border: 1px solid #555555;
-				border-radius: 8px;
-			}
-		</style>
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+			ga('create', 'UA-100289260-1', 'auto');
+			ga('send', 'pageview');
+		</script>
 	</head>
 
 	<!-- Comienza la página -->
-	<body onload="cmIntegration();">
+	<body onload="cmIntegration();" class="terminal">
 		<header>
-			<h1>Ginger Code</h1>
-			<p>Aprende a programar en pseudocodigo con Ginger Code</p>
+			<h1>Ginger Code Terminal</h1>			
+			<img src="img/logo-h.png">			
 		</header>
+		<nav id="main">
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="ginger.html">Comienza!</a></li>				
+			</ul>
+		</nav>
 		<div id="space">
-			<section>				
+			<section class="tutorial">
+				<article class="welcome">
+					<h2>Bienvenido/a!!</h2>
+					<div class="contents">
+						<ol>
+							<li>En el cuadro de texto más abajo puedes escribir código Ginger, y probarlo!</li>
+							<li>Para ejecutar el código resultante, clica el botón Probar, podras ver el resultado en la consola inferior.</li>
+							<li>Proximamente tendremos disponible un tutorial interactivo en esta página para aprender Ginger y los conceptos básicos de programación.</li>
+							<li>Temporalmente, a modo de demostración, hemos dejado un código que muestra diferentes sentencias Ginger y su funcionamiento</li>
+						</ol>						
+					</div>
+				</article>	
+			</section>
+
+
+			<section class="consolas">							
 				<div id="PC">
-					<h2>Pseudocodigo: </h2>
-					<textarea id="PCt">definir @numero1 = 1
+					<!--<h2>Pseudocódigo</h2>-->
+					<textarea id="PCt">// Esto es un comentario
+// Mostrar información:
+mostrar "Hola Mundo!!"
+// Declarar variables
+definir @numero1 = 1
+// Asignar valor a variable
 @numero2 = 2
 @texto = "Un texto"
+// Operaciones sencillas
 @union = @texto + " y mas texto"
 @operacion = @numero1 * @numero2
 @condicion = @numero1 >= @numero2
+// Operaciones en versión texto natural
 @operacion = @numero1 multiplicado por @numero2
 @condicion = @numero1 es mayor o igual que @numero2
+// Listas (Arrays)
 @lista = 1 y 2 y 3
 @lista2 = 1,2,3
+// Prompt, solicitar dato al usuario
+pedir @nombre
+// Diccionarios, objetos o structuras
 @trabajador
-	@nombre = "Homer"
+	@nombre = @nombre
 	@id = 123456
 	@tags = "azul","verde","rojo"
 
+// Mostrar objetos completos
 mostrar @trabajador
 
+// Condicionales
 si 1 > 0
 	mostrar "A"
 pero si 1<0
@@ -105,6 +95,7 @@ pero si 1<0
 si no
 	mostrar "C"
 
+// Condicionales anidadas y bucles
 si @numero2 > @numero1
 	mostrar "Es mayor"
 	repetir 2
@@ -112,36 +103,52 @@ si @numero2 > @numero1
 	si 1
 		@a = 1
 
+// Bucle sencillo (for simplificado)
 @contador = 0
 repetir 5
 	@contador = @contador + 1
 	mostrar @contador
-	
+
+// Bucle condicional (while)
 repetir si @contador>0
 	@contador = @contador - 1
 	mostrar @contador
 
+// Iterador (forof)
 por cada @cosa en @lista
 	mostrar @cosa
 
+// Funciones o procedimientos con parametros
 procedimiento #multiplicar @A y @B
+	// Resultado de procedimiento
 	devolver @A multiplicado por @B
 
+// Forma abreviada para declarar funciones/procedimientos
 #dividir @A y @B
 	devolver @A / @B
 
+// Ejecución de funciones/procedimientos
 mostrar #multiplicar 2 y 2
 mostrar #dividir 10 y 5</textarea>
 				</div>
-				<div id="JS">
-					<h2>JavaScript:</h2>
-					<textarea id="JSt"></textarea>
-				</div>
 				<div id="CONSOLE">
-					<h2>Resultado<button onclick="PCexe();">Probar</button></h2>
+					<div id="errors"></div>
+					<button id="test" onclick="PCexe();">Probar</button>
 					<textarea id="CONSOLEt"></textarea>
+				</div>
+				<div class="hiddenJS">
+					<button id="showJS" onclick="showJSoutput();">Ver JS</button>
+					<div id="JS">
+						<!-- <h2>JavaScript</h2> -->
+						<textarea id="JSt"></textarea>
+					</div>
 				</div>
 			</section>
 		</div>
+		<footer>
+			<div class="contents">
+				<p>Herramienta totalmente gratuita, desarrollada con amor por la comunidad <a href="http://osweekends.com/" target="_blank">Open Source Weekend</a>, para ayudar a las personas a introducirse en la programación.</p>
+			</div>			
+		</footer>
 	</body>
 </html>
