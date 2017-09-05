@@ -124,7 +124,7 @@ function compile(input){
 			line = line.replace(indentType,"");
 			
 			if(indent>blockDeep){
-				throw "Indentación escesiva, solo se debe identar una vez por bloque";
+				throw "Indentación excesiva, solo se debe indentar una vez por bloque";
 			} else if(line.match(/^\s+/)){
 				throw "Indentación mixta o incorrecta, debes usar siempre el mismo tipo de identación";
 			} else if(line.match(/\s+$/)){
