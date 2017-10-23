@@ -219,7 +219,7 @@ function compile(input){
 				});
 			} else if(line.match(sentences.prompt)){
 				line = line.replacer(sentences.prompt,function(match,g,i){
-					return "var "+g[1]+" = window.prompt('"+g[1]+"');";
+					return "var "+g[1]+" = infer(window.prompt('"+g[1]+"'));";
 				});
 			} else {
 				throw "Sentencia incorrecta";
@@ -239,11 +239,17 @@ function compile(input){
 
 	console.log("compiled!");
 	var libs = "// Funciones precargadas\n";
-	libs += "function aleatorio(min,max){\n"+
-						"\tmin = Math.ceil(min);\n"+
-						"\tmax = Math.floor(max);\n"+
-						"\treturn Math.floor(Math.random() * (max - min + 1)) + min;\n"+
-					"}\n";
+
+	libs += (function aleatorio(min,max){
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}).toString().replace(/^\t/gm,'') + '\n';
+
+	libs += (function infer(value){
+		var parsed = parseFloat(value); 
+		return parsed == value? parsed : value;
+	}).toString().replace(/^\t/gm,'') + '\n';
 
 	return JSlines.join("\n")+libs;
 }
