@@ -1,11 +1,23 @@
 {
-  "name": "Ginger-Code",
-  "description": "Translate from pseudocode to code",
+  "name": "ginger-code",
   "version": "0.1.0",
-  
+  "description": "Translate from pseudocode to code",
+  "main": "server.js",
   "dependencies": {
     "pillars": "*"
   },
-  "main": "./app.js",
-  "license": "MIT"
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GingerCode/gingercode.org.git"
+  },
+  "author": "Open Source Weekends",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/GingerCode/gingercode.org/issues"
+  },
+  "homepage": "https://github.com/GingerCode/gingercode.org#readme"
 }
